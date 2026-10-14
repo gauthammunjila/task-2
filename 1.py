@@ -1,3 +1,5 @@
+from typing_extensions import final
+
 import pandas as pd
 
 #Read all CSV files using Pandas.
@@ -54,5 +56,41 @@ print("\nFull joined dataset:\n",
 full_data["sales_amount"] = full_data["quantity"] * full_data["price"]
 print(full_data[["order_id", "name", "product_name", "quantity", "price", "sales_amount"]])
 
+#Calculate Total Revenue
+total_revenue = full_data["sales_amount"].sum()
+print("Total Revenue:", total_revenue)
 
+#Calculate Total Orders.
+total_orders = full_data["order_id"].nunique()
+print("Total Orders:", total_orders)
 
+#To Calculate Average Order Value
+average_order_value = full_data["sales_amount"].mean()
+print("Average Order Value:", average_order_value)
+
+#Calculate Total Quantity Sold
+total_quantity_sold = full_data["quantity"].sum()
+print("Total Quantity Sold:", total_quantity_sold)
+
+#Identify the customer who placed the highest number of orders
+customer_orders = (
+    full_data.groupby(["customer_id", "name"])
+    .size()
+    .reset_index(name="order_count")
+)
+
+highest_customer = customer_orders.sort_values(
+    by="order_count",
+    ascending=False
+).head(1)
+
+print(highest_customer)
+
+#Calculate total quantity sold for each product
+product_quantity = (
+    final.groupby("product_name")["quantity"]
+    .sum()
+    .reset_index()
+)
+
+print(product_quantity)
